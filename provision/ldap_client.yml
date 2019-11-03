@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: ensure openldap is installed
+      yum: pkg={{ item }} state=installed
+      with_items:
+        - openldap
+        - compat-openldap
+        - openldap-clients
+        - openldap-servers
+        - openldap-servers-sql
+        - openldap-devel
+
+    - name: Start slapd service
+      service:
+        name: slapd
+        state: started
+
+    - name: Enable slap service
+      service:
+        name: slapd
+        enabled: yes
+
+    - shell: systemctl status slapd.service
+      register: output
